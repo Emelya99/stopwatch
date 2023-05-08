@@ -45,12 +45,9 @@ img {
     object-fit: cover;
 }
 
+button,
 a {
     transition: all 0.3s ease-in-out;
-}
-
-p {
-    margin-bottom: 40px;
 }
 
 .wrapper {
@@ -65,9 +62,10 @@ p {
     margin: 0 auto;
 }
 
-.btn {
+.timer-btn {
     display: inline-block;
     padding: 20px 100px;
+    margin-top: 40px;
     font-weight: 400;
     font-size: 24px;
     line-height: 1em;
@@ -76,7 +74,7 @@ p {
     background: #E9B121;
 }
 
-.btn:hover {
+.timer-btn:hover {
     color: #2E2E2E;
     background: #FFF;
 }
@@ -102,8 +100,19 @@ p {
     margin-bottom: 50px;
 }
 
-.help-btns {
+.timer-count {
     display: flex;
+    align-items: center;
+}
+
+.timer-count span {
+    display: flex;
+    justify-content: center;
+    width: 70px;
+}
+
+.help-btns {
+    display: none;
     align-items: center;
     justify-content: center;
 }
