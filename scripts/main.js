@@ -103,10 +103,12 @@ const reset = () => {
     seconds = 0;
     minutes = 0;
     hours = 0;
+    lapCount = 0;
     numberMilliseconds.innerHTML = '00';
     numberSeconds.innerHTML = '00';
     numberMinutes.innerHTML = '00';
     numberHours.innerHTML = '00';
+    lapResults.replaceChildren();
     document.title = "Stopwatch";
 }
 
