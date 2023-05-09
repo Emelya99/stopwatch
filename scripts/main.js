@@ -10,6 +10,7 @@ const resetBtn = document.querySelector('.reset'); // reset start button
 const lapBtn = document.querySelector('.lap'); // lap button
 const timerCount = document.querySelector('.timer-count'); // time is displayed here
 
+// storage
 let interval;
 let milliseconds = 0;
 let seconds = 0;
@@ -20,10 +21,17 @@ let hours = 0;
 // adding 1 second
 const tick = () => {
     milliseconds++;
+
+    // implementation of displaying the stopwatch in the title on the page
+    let secondsValue = seconds > 9 ? seconds : '0' + seconds;
+    let minutessValue = minutes > 9 ? minutes : '0' + minutes;
+    let hoursValue = hours > 9 ? hours : '0' + hours;
+    document.title = `Time: ${hoursValue} : ${minutessValue} : ${secondsValue}`;
+
     numberMilliseconds.innerHTML = `0${milliseconds}`;
 
     if(milliseconds > 9) {
-        numberMilliseconds.innerHTML = milliseconds;
+        numberMilliseconds.innerHTML = milliseconds;    
     }
     
     if(milliseconds === 100) {
