@@ -1,17 +1,24 @@
+import { currentlyValues, moreNineTimes, equalsSixty } from './utils.js';
+
 const timerBtn = document.querySelector('.timer-btn'); // timer start button
+
 const numberHours = document.querySelector('.number-hours'); // number that shows how many hours
 const numberMinutes = document.querySelector('.number-minutes'); // number that shows how many minutes
 const numberSeconds = document.querySelector('.number-seconds'); // number that shows how many seconds
 const numberMilliseconds = document.querySelector('.number-milliseconds'); // number that shows how many milliseconds
+
 const helpersBtns = document.querySelector('.help-btns'); // helper buttons block
-const lapResults = document.querySelector('.results-list'); // lap results block
+const lapResultsBlock = document.querySelector('.lap-results'); // lap results block
+const lapResultsList = document.querySelector('.results-list'); // lap results list
 const playBtn = document.querySelector('.play'); // play button
 const stopBtn = document.querySelector('.stop'); // stop button
 const resetBtn = document.querySelector('.reset'); // reset start button
 const lapBtn = document.querySelector('.lap'); // lap button
-const timerCount = document.querySelector('.timer-count'); // time is displayed here
+
+const timerCount = document.querySelector('.currently-timer'); // time is displayed here
 
 // storage
+let isTimer = false;
 let interval;
 let lapCount = 0;
 let milliseconds = 0;
@@ -19,68 +26,36 @@ let seconds = 0;
 let minutes = 0;
 let hours = 0;
 
-
-const currentlyValues = () => {
-    // implementation of displaying the stopwatch in the title on the page
-    let millisecondsValue = milliseconds > 9 ? milliseconds : '0' + milliseconds;
-    let secondsValue = seconds > 9 ? seconds : '0' + seconds;
-    let minutessValue = minutes > 9 ? minutes : '0' + minutes;
-    let hoursValue = hours > 9 ? hours : '0' + hours;
-    let values = {
-        hours: hoursValue,
-        minutes: minutessValue,
-        seconds: secondsValue,
-        milliseconds: millisecondsValue,
-    }
-    return values;
-}
-
-
 // adding 1 second
 const tick = () => {
     milliseconds++;
 
-    let values = currentlyValues();
-    document.title = `Time: ${values.hours} : ${values.minutes} : ${values.seconds}`;
+    let values = currentlyValues(hours,minutes,seconds,milliseconds);
+    document.title = `Time: ${values.hoursValue} : ${values.minutesValue} : ${values.secondsValue}`;
     
-    numberMilliseconds.innerHTML = `0${milliseconds}`;
-
-    if(milliseconds > 9) {
-        numberMilliseconds.innerHTML = milliseconds;    
-    }
-    
+    /* logic to convert milliseconds */
+    moreNineTimes(milliseconds,numberMilliseconds);
     if(milliseconds === 100) {
         milliseconds = 0;
         seconds++;
     }
 
-    if(seconds > 9) {
-        numberSeconds.innerHTML = seconds;
-    } else {
-        numberSeconds.innerHTML = `0${seconds}`;
-    }
-
+    /* logic to convert seconds */
+    moreNineTimes(seconds,numberSeconds);
     if(seconds === 60) {
         seconds = 0;
         minutes++;
     }
 
-    if(minutes > 9) {
-        numberMinutes.innerHTML = minutes;
-    } else {
-        numberMinutes.innerHTML = `0${minutes}`;
-    }
-
+    /* logic to convert minutes */
+    moreNineTimes(minutes,numberMinutes);
     if(minutes === 60) {
         minutes = 0;
         hours++;
     }
 
-    if(hours > 9) {
-        numberHours.innerHTML = hours;
-    } else {
-        numberHours.innerHTML = `0${hours}`;
-    }
+    /* logic to convert hours */
+    moreNineTimes(hours,numberHours);
 }
 
 // Function start stopwatch
@@ -89,11 +64,16 @@ const start = () => {
     interval = setInterval(tick, 10);
     timerBtn.remove();
     helpersBtns.style.display = 'flex';
+    timerCount.style.display = 'flex';
+    playBtn.style.display = 'none';
+    stopBtn.style.display = 'block';
 }
 
 // Function stop stopwatch
 const stop = () => {
     clearInterval(interval);
+    playBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
 }
 
 // Function reset stopwatch
@@ -108,25 +88,30 @@ const reset = () => {
     numberSeconds.innerHTML = '00';
     numberMinutes.innerHTML = '00';
     numberHours.innerHTML = '00';
-    lapResults.replaceChildren();
+    lapResultsList.replaceChildren();
     document.title = "Stopwatch";
+    lapResultsBlock.style.display = 'none';
+    playBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
 }
 
 // Function lap stopwatch
 const lap = () => {
     lapCount++;
 
-    let values = currentlyValues();
+    lapResultsBlock.style.display = 'block';
+
+    let values = currentlyValues(hours,minutes,seconds,milliseconds);
 
     let htmlContent = `<li class="results-item timer-count">
                             <p class="lap-count">lap <span>${lapCount}</span></p>
-                            <span class="number-hours">${values.hours}</span><span>:</span>
-                            <span class="number-minutes">${values.minutes}</span><span>:</span>
-                            <span class="number-seconds">${values.seconds}</span><span>:</span>
-                            <span class="number-milliseconds">${values.milliseconds}</span>
+                            <span class="number-hours">${values.hoursValue}</span><span>:</span>
+                            <span class="number-minutes">${values.minutesValue}</span><span>:</span>
+                            <span class="number-seconds">${values.secondsValue}</span><span>:</span>
+                            <span class="number-milliseconds">${values.millisecondsValue}</span>
                         </li>`;
     
-    lapResults.insertAdjacentHTML('beforeend', htmlContent);
+    lapResultsList.insertAdjacentHTML('beforeend', htmlContent);
 }
 
 // start timer on button click

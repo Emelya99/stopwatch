@@ -105,6 +105,10 @@ a {
     align-items: center;
 }
 
+.currently-timer {
+    display: none;
+}
+
 .timer-count span {
     display: flex;
     justify-content: center;
@@ -144,6 +148,14 @@ a {
 .results-item {
     position: relative;
     margin-bottom: 20px;
+}
+
+.lap-results {
+    display: none;
+}
+
+.lap-results .timer-count {
+    margin-bottom: 30px;
 }
 
 .lap-count {

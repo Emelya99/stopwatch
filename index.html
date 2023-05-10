@@ -24,7 +24,6 @@
 
     <!-- сделать анимацию для каждой секунды -->
     <!-- использовать localstorage для созхранения после перезагрузки -->
-    <!-- корректно отображать все кнопки -->
 
     <main>
 
@@ -36,7 +35,7 @@
               <p>Never lose track of time</p>
               <button class="timer-btn">Get Started</button>
             </div>
-            <div class="timer-count">
+            <div class="timer-count currently-timer">
               <span class="number-hours">00</span>
               <span>:</span>
               <span class="number-minutes">00</span>
@@ -60,6 +59,15 @@
               </button>
             </div>
             <div class="lap-results">
+              <div class="timer-count">
+                <span class="number-hours">hr</span>
+                <span></span>
+                <span class="number-minutes">min</span>
+                <span></span>
+                <span class="number-seconds">sec</span>
+                <span></span>
+                <span class="number-milliseconds">msec</span>
+              </div>
               <ul class="results-list"></ul>
             </div>
           </div>
@@ -73,6 +81,6 @@
 
 
   <!-- Main JS -->
-  <script src="./scripts/main.js"></script>
+  <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>
