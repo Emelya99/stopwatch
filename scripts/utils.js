@@ -19,10 +19,3 @@ export const moreNineTimes = (timeType,block) => {
         block.innerHTML = `0${timeType}`;
     }
 }
-
-export const equalsSixty = (timeType, timeTypeNext) => {
-    if(timeType === 60) {
-        timeType = 0;
-        timeTypeNext++;
-    }
-}
