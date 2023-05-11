@@ -114,10 +114,10 @@ const lap = () => {
     lapResultsBlock.style.display = 'block';
 
     // if there are more than 100 or 1000 circles, then add a class so that the number of laps is displayed correctly
-    if(lapCount >= 100) {
+    if(lapCount === 100) {
         lapResultsList.classList.add("over-100");
     }
-    if (lapCount >= 1000) {
+    if (lapCount === 1000) {
         lapResultsList.classList.add("over-1000");
         lapResultsList.classList.remove("over-100");
     }
