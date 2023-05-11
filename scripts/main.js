@@ -18,7 +18,6 @@ const lapBtn = document.querySelector('.lap'); // lap button
 const timerCount = document.querySelector('.currently-timer'); // time is displayed here
 
 // storage
-let isTimer = false;
 let interval;
 let lapCount = 0;
 let milliseconds = 0;
@@ -67,6 +66,7 @@ const start = () => {
     timerCount.style.display = 'flex';
     playBtn.style.display = 'none';
     stopBtn.style.display = 'block';
+    lapBtn.style.display = 'block';
 }
 
 // Function stop stopwatch
@@ -93,11 +93,20 @@ const reset = () => {
     lapResultsBlock.style.display = 'none';
     playBtn.style.display = 'flex';
     stopBtn.style.display = 'none';
+    lapBtn.style.display = 'none';
 }
 
 // Function lap stopwatch
 const lap = () => {
     lapCount++;
+
+    if(lapCount >= 100) {
+        lapResultsList.classList.add("over-100");
+    }
+    if (lapCount >= 1000) {
+        lapResultsList.classList.add("over-1000");
+        lapResultsList.classList.remove("over-100");
+    }
 
     lapResultsBlock.style.display = 'block';
 
