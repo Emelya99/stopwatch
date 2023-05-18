@@ -56,16 +56,8 @@ const lap = () => {
 
 worker.onmessage = function(e) {
     const { millisecondsValue, secondsValue, minutesValue, hoursValue, lapCount, isLap } = e.data;
-    
-    numberMilliseconds.innerHTML = millisecondsValue;
-    numberSeconds.innerHTML = secondsValue;
-    numberMinutes.innerHTML = minutesValue;
-    numberHours.innerHTML = hoursValue;
-
-    document.title = `Time: ${hoursValue} : ${minutesValue} : ${secondsValue}`;
 
     if(isLap === true) {
-        worker.postMessage('lapStop');
         // if there are more than 100 or 1000 circles, then add a class so that the number of laps is displayed correctly
         if(lapCount === 100) {
             lapResultsList.classList.add("over-100");
@@ -85,6 +77,13 @@ worker.onmessage = function(e) {
 
         lapResultsList.insertAdjacentHTML('beforeend', htmlContent);
     }
+    
+    numberMilliseconds.innerHTML = millisecondsValue;
+    numberSeconds.innerHTML = secondsValue;
+    numberMinutes.innerHTML = minutesValue;
+    numberHours.innerHTML = hoursValue;
+
+    document.title = `Time: ${hoursValue} : ${minutesValue} : ${secondsValue}`;
 };
 
 timerBtn.addEventListener('click', start);

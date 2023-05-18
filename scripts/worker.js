@@ -12,8 +12,6 @@ const currentlyValues = (hours,minutes,seconds,milliseconds) => {
     let minutesValue = minutes > 9 ? minutes : '0' + minutes;
     let hoursValue = hours > 9 ? hours : '0' + hours;
     let values = {
-        isLap,
-        lapCount,
         hoursValue,
         minutesValue,
         secondsValue,
@@ -41,7 +39,7 @@ const tick = () => {
     }
 
     let values = currentlyValues(hours,minutes,seconds,milliseconds);
-
+    
     this.postMessage(values);
 }
 
@@ -65,13 +63,12 @@ const resetTimer = () => {
 }
 
 const lapTimer = () => {
+    let values = currentlyValues(hours,minutes,seconds,milliseconds);
     lapCount++;
     isLap = true;
-    let values = currentlyValues(hours,minutes,seconds,milliseconds);
+    values.lapCount = lapCount;
+    values.isLap= isLap;
     this.postMessage(values);
-}
-
-const lapStopTimer = () => {
     isLap = false;
 }
 
@@ -88,9 +85,6 @@ this.addEventListener('message', function(event) {
             break;
         case "lap":
             lapTimer();
-            break;
-        case "lapStop":
-            lapStopTimer();
             break;
     }
 });
