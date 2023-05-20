@@ -67,13 +67,21 @@ const lapTimer = () => {
     lapCount++;
     isLap = true;
     values.lapCount = lapCount;
-    values.isLap= isLap;
+    values.isLap = isLap;
     this.postMessage(values);
     isLap = false;
 }
 
-this.addEventListener('message', function(event) {
-    switch(event.data) {
+const render = (data) => {
+    milliseconds = Number(data.milliseconds);
+    seconds = Number(data.seconds);
+    minutes = Number(data.minutes);
+    hours = Number(data.hours);
+    lapCount = Number(data.lapCount);
+}
+
+this.addEventListener('message', function(e) {
+    switch(e.data.name) {
         case "start":
             startTimer();
             break;
@@ -85,6 +93,9 @@ this.addEventListener('message', function(event) {
             break;
         case "lap":
             lapTimer();
+            break;
+        case "render":
+            render(e.data.value);
             break;
     }
 });

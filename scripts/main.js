@@ -1,3 +1,5 @@
+import { renderLaps } from './utils.js'
+
 const timerBtn = document.querySelector('.timer-btn'); // timer start button
 
 const numberHours = document.querySelector('.number-hours'); // number that shows how many hours
@@ -16,9 +18,35 @@ const lapBtn = document.querySelector('.lap'); // lap button
 const timerCount = document.querySelector('.currently-timer'); // time is displayed here
 
 let worker = new Worker('./scripts/worker.js');
+let localStorageRender = JSON.parse(localStorage.getItem('seconds')) || false;
+let allLaps = JSON.parse(localStorage.getItem('allLapsArr')) || [];
+
+if(localStorageRender) {
+    let data = {
+        milliseconds: JSON.parse(localStorage.getItem('milliseconds')),
+        seconds: JSON.parse(localStorage.getItem('seconds')),
+        minutes: JSON.parse(localStorage.getItem('minutes')),
+        hours: JSON.parse(localStorage.getItem('hours')),
+        lapCount: JSON.parse(localStorage.getItem('lapCount')),
+    }
+    worker.postMessage({ name: 'render', value: data });
+    timerBtn.remove();
+    helpersBtns.style.display = 'flex';
+    timerCount.style.display = 'flex';
+    playBtn.style.display = 'none';
+    worker.postMessage({ name: 'start' });
+    
+    if(allLaps.length >= 1) {
+        lapResultsBlock.style.display = 'block';
+        allLaps.map(item => {
+            let result = renderLaps(item);
+            lapResultsList.insertAdjacentHTML('beforeend', result);
+        })
+    }
+}
 
 const start = () => {
-    worker.postMessage('start');
+    worker.postMessage({ name: 'start' });
     timerBtn.remove();
     helpersBtns.style.display = 'flex';
     timerCount.style.display = 'flex';
@@ -26,16 +54,18 @@ const start = () => {
     lapBtn.style.display = 'block';
     resetBtn.style.display = 'block';
     playBtn.style.display = 'none';
+    allLaps = [];
+    localStorage.clear()
 }
 
 const stop = () => {
-    worker.postMessage('stop');
+    worker.postMessage({ name: 'stop' });
     playBtn.style.display = 'flex';
     stopBtn.style.display = 'none';
 }
 
 const reset = () => {
-    worker.postMessage('reset');
+    worker.postMessage({ name: 'reset' });
     numberMilliseconds.innerHTML = '00';
     numberSeconds.innerHTML = '00';
     numberMinutes.innerHTML = '00';
@@ -47,10 +77,12 @@ const reset = () => {
     stopBtn.style.display = 'none';
     lapBtn.style.display = 'none';
     resetBtn.style.display = 'none';
+    allLaps = [];
+    localStorage.clear();
 }
 
 const lap = () => {
-    worker.postMessage('lap');
+    worker.postMessage({ name: 'lap' });
     lapResultsBlock.style.display = 'block';
 }
 
@@ -66,17 +98,26 @@ worker.onmessage = function(e) {
             lapResultsList.classList.add("over-1000");
             lapResultsList.classList.remove("over-100");
         }
+        
+        const valuesLap = {
+            millisecondsValue,
+            secondsValue,
+            minutesValue,
+            hoursValue,
+            lapCount
+        }
 
-        let htmlContent = `<li class="results-item timer-count">
-                                        <p class="lap-count">lap <span>${lapCount}</span></p>
-                                        <span class="number-hours">${hoursValue}</span><span>:</span>
-                                        <span class="number-minutes">${minutesValue}</span><span>:</span>
-                                        <span class="number-seconds">${secondsValue}</span><span>:</span>
-                                        <span class="number-milliseconds">${millisecondsValue}</span>
-                                    </li>`;
+        let result = renderLaps(valuesLap);
+        lapResultsList.insertAdjacentHTML('beforeend', result);
 
-        lapResultsList.insertAdjacentHTML('beforeend', htmlContent);
+        allLaps.push(valuesLap);
+        localStorage.setItem(`allLapsArr`, JSON.stringify(allLaps));
+        localStorage.setItem('lapCount', JSON.stringify(lapCount));
     }
+    localStorage.setItem('milliseconds', JSON.stringify(millisecondsValue));
+    localStorage.setItem('seconds', JSON.stringify(secondsValue));
+    localStorage.setItem('minutes', JSON.stringify(minutesValue));
+    localStorage.setItem('hours', JSON.stringify(hoursValue));
     
     numberMilliseconds.innerHTML = millisecondsValue;
     numberSeconds.innerHTML = secondsValue;
