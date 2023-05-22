@@ -15,13 +15,37 @@ const stopBtn = document.querySelector('.stop'); // stop button
 const resetBtn = document.querySelector('.reset'); // reset start button
 const lapBtn = document.querySelector('.lap'); // lap button
 
+/* Popup */
+const popupContainer = document.querySelector('.popup');
+const popupOverlay = document.querySelector('.popup .overlay');
+const popupClose = document.querySelector('.popup .close');
+const popupYes = document.querySelector('.popup .popup-yes');
+const popupNo = document.querySelector('.popup .popup-no');
+
 const timerCount = document.querySelector('.currently-timer'); // time is displayed here
 
 let worker = new Worker('./scripts/worker.js');
 let localStorageRender = JSON.parse(localStorage.getItem('seconds')) || false;
 let allLaps = JSON.parse(localStorage.getItem('allLapsArr')) || [];
 
-if(localStorageRender) {
+/* Popup Logic */
+const closePopup = () => {
+    popupContainer.style.display = 'none';
+}
+const popupClickYes = () => {
+    start();
+    closePopup();
+}
+const popupClickNo = () => {
+    reset();
+    closePopup();
+}
+
+if (localStorageRender) {
+    popupOverlay.addEventListener('click', closePopup);
+    popupClose.addEventListener('click', closePopup);
+    popupYes.addEventListener('click', popupClickYes, { once: true });
+    popupNo.addEventListener('click', popupClickNo, { once: true });
     let data = {
         milliseconds: JSON.parse(localStorage.getItem('milliseconds')),
         seconds: JSON.parse(localStorage.getItem('seconds')),
@@ -31,18 +55,25 @@ if(localStorageRender) {
     }
     worker.postMessage({ name: 'render', value: data });
     timerBtn.remove();
+    popupContainer.style.display = 'flex';
     helpersBtns.style.display = 'flex';
     timerCount.style.display = 'flex';
-    playBtn.style.display = 'none';
-    worker.postMessage({ name: 'start' });
+    playBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
+    numberMilliseconds.innerHTML = data.milliseconds;
+    numberSeconds.innerHTML = data.seconds;
+    numberMinutes.innerHTML = data.minutes;
+    numberHours.innerHTML = data.hours;
     
-    if(allLaps.length >= 1) {
+    if (allLaps.length >= 1) {
         lapResultsBlock.style.display = 'block';
         allLaps.map(item => {
             let result = renderLaps(item);
             lapResultsList.insertAdjacentHTML('beforeend', result);
         })
     }
+} else {
+    timerBtn.style.display = "inline-block";
 }
 
 const start = () => {
@@ -54,8 +85,6 @@ const start = () => {
     lapBtn.style.display = 'block';
     resetBtn.style.display = 'block';
     playBtn.style.display = 'none';
-    allLaps = [];
-    localStorage.clear()
 }
 
 const stop = () => {
@@ -89,9 +118,9 @@ const lap = () => {
 worker.onmessage = function(e) {
     const { millisecondsValue, secondsValue, minutesValue, hoursValue, lapCount, isLap } = e.data;
 
-    if(isLap === true) {
+    if (isLap === true) {
         // if there are more than 100 or 1000 circles, then add a class so that the number of laps is displayed correctly
-        if(lapCount === 100) {
+        if (lapCount === 100) {
             lapResultsList.classList.add("over-100");
         }
         if (lapCount === 1000) {

@@ -29,6 +29,18 @@ h1 {
     font-size: 48px;
     line-height: 1.1em;
 }
+h2 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.25em;
+}
+@media(max-width: 640px) {
+    h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+}
 a {
     text-decoration: none;
 }
@@ -57,7 +69,7 @@ a {
     margin: 0 auto;
 }
 .timer-btn {
-    display: inline-block;
+    display: none;
     padding: 15px 60px;
     margin-top: 40px;
     font-weight: 400;
@@ -185,5 +197,95 @@ a {
     }
     .lap-count {
         display: none;
+    }
+}
+
+/* Popup */
+.popup {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    background: rgba(0,0,0,0.5);
+}
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    padding: 60px 30px;
+    z-index: 1;
+    border-radius: 18px;
+    background: #2E2E2E;
+}
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.close:hover {
+    transform: scale(1.05);
+}
+.popup-btns {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: calc(100% + 30px);
+    margin: -15px;
+}
+.popup-btns li {
+    width: 50%;
+    padding: 15px;
+}
+.popup-btns button {
+    display: block;
+    width: 100%;
+    padding: 12px 30px;
+    border-radius: 36px;
+    font-size: 18px;
+    color: #2E2E2E;
+    background: #FFF;
+}
+.popup-btns button:hover {
+    color: #FFF;
+    background: #E9B121;
+}
+.popup-btns .active-btn {
+    color: #FFF;
+    background: #E9B121;
+}
+.popup-btns .active-btn:hover {
+    color: #2E2E2E;
+    background: #FFF;
+}
+@media(max-width: 640px) {
+    .popup-content {
+        padding: 30px 15px;
+    }
+    .popup-btns {
+        width: calc(100% + 10px);
+        margin: -5px;
+    }
+    .popup-btns li {
+        width: 100%;
+        padding: 5px;
+    }
+    .popup-btns button {
+        padding: 8px 16px;
     }
 }
