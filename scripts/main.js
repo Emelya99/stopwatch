@@ -1,12 +1,16 @@
-import { renderLaps } from './utils.js'
+import { renderLaps, addStyleFlex, addStyleDisplayNone, addStyleDisplayBlock } from './utils.js'
 
+/* Main start button */
 const timerBtn = document.querySelector('.timer-btn'); // timer start button
 
+/* Time Variables */
 const numberHours = document.querySelector('.number-hours'); // number that shows how many hours
 const numberMinutes = document.querySelector('.number-minutes'); // number that shows how many minutes
 const numberSeconds = document.querySelector('.number-seconds'); // number that shows how many seconds
 const numberMilliseconds = document.querySelector('.number-milliseconds'); // number that shows how many milliseconds
 
+/* All auxiliary blocks and buttons */
+const timerCount = document.querySelector('.currently-timer'); // time is displayed here
 const helpersBtns = document.querySelector('.help-btns'); // helper buttons block
 const lapResultsBlock = document.querySelector('.lap-results'); // lap results block
 const lapResultsList = document.querySelector('.results-list'); // lap results list
@@ -15,37 +19,42 @@ const stopBtn = document.querySelector('.stop'); // stop button
 const resetBtn = document.querySelector('.reset'); // reset start button
 const lapBtn = document.querySelector('.lap'); // lap button
 
-/* Popup */
-const popupContainer = document.querySelector('.popup');
-const popupOverlay = document.querySelector('.popup .overlay');
-const popupClose = document.querySelector('.popup .close');
-const popupYes = document.querySelector('.popup .popup-yes');
-const popupNo = document.querySelector('.popup .popup-no');
+/* Popup Elements */
+const popupContainer = document.querySelector('.popup'); // popup global element
+const popupOverlay = document.querySelector('.popup .overlay'); // popup overlay
+const popupClose = document.querySelector('.popup .close'); // close btn for popup
+const popupYes = document.querySelector('.popup .popup-yes'); // btn with "Yes"
+const popupNo = document.querySelector('.popup .popup-no'); // btn with "No"
 
-const timerCount = document.querySelector('.currently-timer'); // time is displayed here
+/* Variables that are associated with localStorage */
+let localStorageRender = JSON.parse(localStorage.getItem('seconds')) || false; // checking if there is anything at all in localStorage
+let allLaps = JSON.parse(localStorage.getItem('allLapsArr')) || []; // if there is, we get an array of laps
 
+/* ==================== End variables ==================== */
+
+/* Start the worker */
 let worker = new Worker('./scripts/worker.js');
-let localStorageRender = JSON.parse(localStorage.getItem('seconds')) || false;
-let allLaps = JSON.parse(localStorage.getItem('allLapsArr')) || [];
 
-/* Popup Logic */
+// Logic for popup closing
 const closePopup = () => {
-    popupContainer.style.display = 'none';
+    addStyleDisplayNone(popupContainer);
 }
+
+// Continues the stopwatch and closes the popup
 const popupClickYes = () => {
     start();
     closePopup();
 }
+
+// Resets the popup and closes the popup
 const popupClickNo = () => {
     reset();
     closePopup();
 }
 
+// If localStorage is not empty, then we proceed further, otherwise we display the main button
 if (localStorageRender) {
-    popupOverlay.addEventListener('click', closePopup);
-    popupClose.addEventListener('click', closePopup);
-    popupYes.addEventListener('click', popupClickYes, { once: true });
-    popupNo.addEventListener('click', popupClickNo, { once: true });
+    // Get data from localStorage and send to worker
     let data = {
         milliseconds: JSON.parse(localStorage.getItem('milliseconds')),
         seconds: JSON.parse(localStorage.getItem('seconds')),
@@ -54,19 +63,27 @@ if (localStorageRender) {
         lapCount: JSON.parse(localStorage.getItem('lapCount')),
     }
     worker.postMessage({ name: 'render', value: data });
-    timerBtn.remove();
-    popupContainer.style.display = 'flex';
-    helpersBtns.style.display = 'flex';
-    timerCount.style.display = 'flex';
-    playBtn.style.display = 'flex';
-    stopBtn.style.display = 'none';
+
+    // Add event handlers for the popup
+    popupOverlay.addEventListener('click', closePopup, { once: true });
+    popupClose.addEventListener('click', closePopup, { once: true });
+    popupYes.addEventListener('click', popupClickYes, { once: true });
+    popupNo.addEventListener('click', popupClickNo, { once: true });
+
+    // Show/hide elements
+    addStyleFlex(popupContainer, helpersBtns, timerCount, playBtn);
+    addStyleDisplayNone(stopBtn, timerBtn);
+
+    // Display current stopwatch values
     numberMilliseconds.innerHTML = data.milliseconds;
     numberSeconds.innerHTML = data.seconds;
     numberMinutes.innerHTML = data.minutes;
     numberHours.innerHTML = data.hours;
     
+    // If we have laps in localStorage render them
     if (allLaps.length >= 1) {
-        lapResultsBlock.style.display = 'block';
+        addStyleDisplayBlock(lapResultsBlock);
+
         allLaps.map(item => {
             let result = renderLaps(item);
             lapResultsList.insertAdjacentHTML('beforeend', result);
@@ -76,48 +93,60 @@ if (localStorageRender) {
     timerBtn.style.display = "inline-block";
 }
 
+// Stopwatch start logic
 const start = () => {
     worker.postMessage({ name: 'start' });
-    timerBtn.remove();
-    helpersBtns.style.display = 'flex';
-    timerCount.style.display = 'flex';
-    stopBtn.style.display = 'block';
-    lapBtn.style.display = 'block';
-    resetBtn.style.display = 'block';
-    playBtn.style.display = 'none';
+
+    // Show/hide elements
+    addStyleFlex(helpersBtns,timerCount);
+    addStyleDisplayNone(playBtn, timerBtn);
+    addStyleDisplayBlock(stopBtn, lapBtn, resetBtn);
 }
 
+// Stopwatch stop logic
 const stop = () => {
     worker.postMessage({ name: 'stop' });
-    playBtn.style.display = 'flex';
-    stopBtn.style.display = 'none';
+
+    // Show/hide elements
+    addStyleFlex(playBtn);
+    addStyleDisplayNone(stopBtn);
 }
 
+// Stopwatch reset logic
 const reset = () => {
     worker.postMessage({ name: 'reset' });
+
+    // Reset all elements to default settings
     numberMilliseconds.innerHTML = '00';
     numberSeconds.innerHTML = '00';
     numberMinutes.innerHTML = '00';
     numberHours.innerHTML = '00';
     document.title = "Stopwatch";
     lapResultsList.replaceChildren();
-    playBtn.style.display = 'flex';
-    lapResultsBlock.style.display = 'none';
-    stopBtn.style.display = 'none';
-    lapBtn.style.display = 'none';
-    resetBtn.style.display = 'none';
+
+    // Show/hide elements
+    addStyleFlex(playBtn);
+    addStyleDisplayNone(lapResultsBlock, stopBtn, lapBtn, resetBtn);
+
+    // Clear the array with laps and localStorage
     allLaps = [];
     localStorage.clear();
 }
 
+// Lap adding logic
 const lap = () => {
     worker.postMessage({ name: 'lap' });
-    lapResultsBlock.style.display = 'block';
+    
+    // Show/hide elements
+    addStyleDisplayBlock(lapResultsBlock);
 }
 
+// Processing the response from the worker
 worker.onmessage = function(e) {
+    // Get variables from the worker
     const { millisecondsValue, secondsValue, minutesValue, hoursValue, lapCount, isLap } = e.data;
 
+    // If there are laps in the answer
     if (isLap === true) {
         // if there are more than 100 or 1000 circles, then add a class so that the number of laps is displayed correctly
         if (lapCount === 100) {
@@ -128,34 +157,35 @@ worker.onmessage = function(e) {
             lapResultsList.classList.remove("over-100");
         }
         
-        const valuesLap = {
-            millisecondsValue,
-            secondsValue,
-            minutesValue,
-            hoursValue,
-            lapCount
-        }
-
+        // Collecting all the necessary data to render the circle
+        const valuesLap = { millisecondsValue, secondsValue, minutesValue, hoursValue, lapCount}
+        // Get html markup via renderLaps()
         let result = renderLaps(valuesLap);
+        // Render a lap on the page
         lapResultsList.insertAdjacentHTML('beforeend', result);
-
+        // Write the lap to an array with laps
         allLaps.push(valuesLap);
-        localStorage.setItem(`allLapsArr`, JSON.stringify(allLaps));
+
+        // Write values to localStorage
+        localStorage.setItem('allLapsArr', JSON.stringify(allLaps));
         localStorage.setItem('lapCount', JSON.stringify(lapCount));
     }
+
+    // Write values to localStorage
     localStorage.setItem('milliseconds', JSON.stringify(millisecondsValue));
     localStorage.setItem('seconds', JSON.stringify(secondsValue));
     localStorage.setItem('minutes', JSON.stringify(minutesValue));
     localStorage.setItem('hours', JSON.stringify(hoursValue));
     
+    // Display actual values
     numberMilliseconds.innerHTML = millisecondsValue;
     numberSeconds.innerHTML = secondsValue;
     numberMinutes.innerHTML = minutesValue;
     numberHours.innerHTML = hoursValue;
-
     document.title = `Time: ${hoursValue} : ${minutesValue} : ${secondsValue}`;
 };
 
+// Event handlers for buttons (helpersBtns)
 timerBtn.addEventListener('click', start);
 playBtn.addEventListener('click', start);
 stopBtn.addEventListener('click', stop);

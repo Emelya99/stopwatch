@@ -1,3 +1,4 @@
+// function to render html for laps
 export const renderLaps = ({millisecondsValue, secondsValue, minutesValue, hoursValue, lapCount}) => {
     let htmlContent = `<li class="results-item timer-count">
         <p class="lap-count">lap <span>${lapCount}</span></p>
@@ -8,4 +9,25 @@ export const renderLaps = ({millisecondsValue, secondsValue, minutesValue, hours
     </li>`;
 
     return htmlContent;
+}
+
+// adding a flex property to an element
+export const addStyleFlex = (...arr) => {
+    arr.map(item => {
+        item.style.display = 'flex';
+    })
+}
+
+// adding a none property to an element
+export const addStyleDisplayNone = (...arr) => {
+    arr.map(item => {
+        item.style.display = 'none';
+    })
+}
+
+// adding a block property to an element
+export const addStyleDisplayBlock= (...arr) => {
+    arr.map(item => {
+        item.style.display = 'block';
+    })
 }

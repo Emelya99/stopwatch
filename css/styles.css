@@ -223,7 +223,9 @@ a {
 }
 .popup-content {
     position: relative;
-    max-width: 600px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
     padding: 60px 30px;
     z-index: 1;
     border-radius: 18px;
