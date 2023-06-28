@@ -1,30 +1,31 @@
 import { renderLaps, addStyleFlex, addStyleDisplayNone, addStyleDisplayBlock } from './utils.js'
 
+const timerContainer = document.querySelector('.timer'); // timer section
 /* Main start button */
-const timerBtn = document.querySelector('.timer-btn'); // timer start button
+const timerBtn = timerContainer.querySelector('.timer-btn'); // timer start button
 
 /* Time Variables */
-const numberHours = document.querySelector('.number-hours'); // number that shows how many hours
-const numberMinutes = document.querySelector('.number-minutes'); // number that shows how many minutes
-const numberSeconds = document.querySelector('.number-seconds'); // number that shows how many seconds
-const numberMilliseconds = document.querySelector('.number-milliseconds'); // number that shows how many milliseconds
+const numberHours = timerContainer.querySelector('.number-hours'); // number that shows how many hours
+const numberMinutes = timerContainer.querySelector('.number-minutes'); // number that shows how many minutes
+const numberSeconds = timerContainer.querySelector('.number-seconds'); // number that shows how many seconds
+const numberMilliseconds = timerContainer.querySelector('.number-milliseconds'); // number that shows how many milliseconds
 
 /* All auxiliary blocks and buttons */
-const timerCount = document.querySelector('.currently-timer'); // time is displayed here
-const helpersBtns = document.querySelector('.help-btns'); // helper buttons block
-const lapResultsBlock = document.querySelector('.lap-results'); // lap results block
-const lapResultsList = document.querySelector('.results-list'); // lap results list
-const playBtn = document.querySelector('.play'); // play button
-const stopBtn = document.querySelector('.stop'); // stop button
-const resetBtn = document.querySelector('.reset'); // reset start button
-const lapBtn = document.querySelector('.lap'); // lap button
+const timerCount = timerContainer.querySelector('.currently-timer'); // time is displayed here
+const helpersBtns = timerContainer.querySelector('.help-btns'); // helper buttons block
+const lapResultsBlock = timerContainer.querySelector('.lap-results'); // lap results block
+const lapResultsList = timerContainer.querySelector('.results-list'); // lap results list
+const playBtn = timerContainer.querySelector('.play'); // play button
+const stopBtn = timerContainer.querySelector('.stop'); // stop button
+const resetBtn = timerContainer.querySelector('.reset'); // reset start button
+const lapBtn = timerContainer.querySelector('.lap'); // lap button
 
 /* Popup Elements */
 const popupContainer = document.querySelector('.popup'); // popup global element
-const popupOverlay = document.querySelector('.popup .overlay'); // popup overlay
-const popupClose = document.querySelector('.popup .close'); // close btn for popup
-const popupYes = document.querySelector('.popup .popup-yes'); // btn with "Yes"
-const popupNo = document.querySelector('.popup .popup-no'); // btn with "No"
+const popupOverlay = popupContainer.querySelector('.overlay'); // popup overlay
+const popupClose = popupContainer.querySelector('.close'); // close btn for popup
+const popupYes = popupContainer.querySelector('.popup-yes'); // btn with "Yes"
+const popupNo = popupContainer.querySelector('.popup-no'); // btn with "No"
 
 /* Variables that are associated with localStorage */
 let localStorageRender = JSON.parse(localStorage.getItem('seconds')) || false; // checking if there is anything at all in localStorage
@@ -72,7 +73,7 @@ if (localStorageRender) {
 
     // Show/hide elements
     addStyleFlex(popupContainer, helpersBtns, timerCount, playBtn);
-    addStyleDisplayNone(stopBtn, timerBtn);
+    addStyleDisplayNone(stopBtn, timerBtn, lapBtn);
 
     // Display current stopwatch values
     numberMilliseconds.innerHTML = data.milliseconds;
@@ -109,7 +110,7 @@ const stop = () => {
 
     // Show/hide elements
     addStyleFlex(playBtn);
-    addStyleDisplayNone(stopBtn);
+    addStyleDisplayNone(stopBtn, lapBtn);
 }
 
 // Stopwatch reset logic
